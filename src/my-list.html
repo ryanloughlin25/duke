@@ -1,0 +1,4 @@
+<input type="text" ng-model="mlc.filter">
+<ul>
+  <li ng-repeat="stuff in mlc.stuffs | filter:mlc.filter">{{stuff}}</li>
+</ul>
