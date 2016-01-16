@@ -1,2 +1,3 @@
 *.swp
+.DS*
 */npm-debug.log
