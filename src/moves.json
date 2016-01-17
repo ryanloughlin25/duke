@@ -1,0 +1,27 @@
+{
+  "footman": {
+    "front": [
+      {"row": -1, "column": 0, "moveType": "basic"},
+      {"row": 0, "column": -1, "moveType": "basic"},
+      {"row": 0, "column": 1, "moveType": "basic"},
+      {"row": 1, "column": 0, "moveType": "basic"}
+    ],
+    "back": [
+      {"row": -2, "column": 0, "moveType": "basic"},
+      {"row": -1, "column": -1, "moveType": "basic"},
+      {"row": -1, "column": 1, "moveType": "basic"},
+      {"row": 1, "column": -1, "moveType": "basic"},
+      {"row": 1, "column": 1, "moveType": "basic"}
+    ]
+  },
+  "duke": {
+    "front": [
+      {"row": 0, "column": -1, "moveType": "slide"},
+      {"row": 0, "column": 1, "moveType": "slide"}
+    ],
+    "back": [
+      {"row": -1, "column": 0, "moveType": "slide"},
+      {"row": 1, "column": 0, "moveType": "slide"}
+    ]
+  }
+}

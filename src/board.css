@@ -1,0 +1,26 @@
+.row {
+  width: 100%;
+  height: 100px;
+  vertical-align:top;
+}
+
+.square {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  border: 2px solid black;
+  vertical-align:top;
+  background-color: tan;
+}
+
+.white {
+  background-color: white;
+}
+
+.black {
+  background-color: black;
+}
+
+.selected {
+  background-color: blue;
+}
