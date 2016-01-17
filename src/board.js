@@ -3,31 +3,32 @@
   function BoardService($http) {
     var bs = this;
     this.size = 6;
-    this.selectedPiece = null;
-    this.allMoves = null;
+    this.selectedPiece;
+    this.allMoves;
     this.pieces = {
       '2,2': piece('footman', 'white')
     };
 
     $http.get('./moves.json').then(function(response) {
       bs.allMoves = response.data;
-      console.log(bs.allMoves);
     });
 
-    this.getBoard = function() {
-      var board = Array(bs.size).fill(null).map(function() {
-        return Array(bs.size).fill(null).map(function() {
-          return new Object();
+    this.getPieces = function() {
+      var pieces = [];
+      for (loc in bs.pieces) {
+        var piece = bs.pieces[loc];
+        pieces.push({
+          row: loc.split(',')[0],
+          column: loc.split(',')[1],
+          piece: {
+            selected: bs.selectedPiece === piece,
+            rank: piece.rank,
+            color: piece.color,
+            side: piece.side
+          }
         });
-      });
-
-      for (loc in this.pieces) {
-        var foo = loc.split(',');
-        var row = foo[0];
-        var column = foo[1];
-        board[row][column] = this.pieces[loc];
       }
-      return board;
+      return pieces;
     };
 
     this.select = function(row, column) {
@@ -35,27 +36,36 @@
       bs.selectedPiece = bs.pieces[loc];
     };
 
-    this.isSelected = function(row, column) {
-      var loc = row + ',' + column;
-      var piece = bs.pieces[loc];
-      if (piece && bs.selectedPiece === piece) {
-        return 'selected'
-      }
-    };
-
     function piece(rank, color, side) {
       return {
-        'rank': rank,
-        'color': color,
-        'side': side || 'front',
+        rank: rank,
+        color: color,
+        side: side || 'front',
       };
     }
   }
 
   function BoardController(boardService) {
-    this.board = boardService.getBoard();
-    this.select = boardService.select;
-    this.isSelected = boardService.isSelected;
+    var bc = this;
+    this.board;
+    updateBoard();
+    this.select = function(row, column) {
+      boardService.select(row, column);
+      updateBoard();
+    };
+
+    function updateBoard() {
+      var size = boardService.size;
+      bc.board = Array(size).fill(null).map(function() {
+        return Array(size).fill(null);
+      });
+
+      var pieces = boardService.getPieces();
+      for (var i = 0; i < pieces.length; i++) {
+        var piece = pieces[i];
+        bc.board[piece.row][piece.column] = piece.piece;
+      }
+    };
   }
 
   function board() {
