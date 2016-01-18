@@ -3,37 +3,48 @@
   function BoardService($http) {
     var bs = this;
     this.size = 6;
-    this.selectedPiece;
+    this.row;
+    this.column;
     this.allMoves;
-    this.pieces = {
-      '2,2': piece('footman', 'white')
-    };
+    this.board = Array(bs.size).fill(null).map(function() {
+      return Array(bs.size).fill(null).map(function() {
+        return new Object();
+      });
+    });
+    this.board[2][2] = piece('footman', 'white');
+    this.board[4][4] = piece('footman', 'black');
 
     $http.get('./moves.json').then(function(response) {
       bs.allMoves = response.data;
     });
 
-    this.getPieces = function() {
-      var pieces = [];
-      for (loc in bs.pieces) {
-        var piece = bs.pieces[loc];
-        pieces.push({
-          row: loc.split(',')[0],
-          column: loc.split(',')[1],
-          piece: {
-            selected: bs.selectedPiece === piece,
-            rank: piece.rank,
-            color: piece.color,
-            side: piece.side
-          }
-        });
+    this.getPiece = function(row, column) {
+      if (row && column &&
+          row >= 0 && column >= 0 &&
+          row < bs.size && column < bs.size) {
+        return bs.board[row][column];
+      } else {
+        return null;
       }
-      return pieces;
     };
 
-    this.select = function(row, column) {
-      var loc = row + ',' + column;
-      bs.selectedPiece = bs.pieces[loc];
+    this.click = function(row, column) {
+      var piece = bs.getPiece(row, column);
+      var selectedPiece = bs.getPiece(bs.row, bs.column);
+      if (bs.row && bs.column) {
+        selectedPiece.selected = false;
+        bs.board[bs.row][bs.column] = new Object();
+        bs.board[row][column] = selectedPiece;
+        bs.row = null;
+        bs.column = null;
+      } else if (piece.rank) {
+        bs.row = row;
+        bs.column = column;
+        piece.selected = true;
+      } else {
+        bs.row = null;
+        bs.column = null;
+      }
     };
 
     function piece(rank, color, side) {
@@ -41,31 +52,15 @@
         rank: rank,
         color: color,
         side: side || 'front',
+        selected: false
       };
     }
   }
 
   function BoardController(boardService) {
     var bc = this;
-    this.board;
-    updateBoard();
-    this.select = function(row, column) {
-      boardService.select(row, column);
-      updateBoard();
-    };
-
-    function updateBoard() {
-      var size = boardService.size;
-      bc.board = Array(size).fill(null).map(function() {
-        return Array(size).fill(null);
-      });
-
-      var pieces = boardService.getPieces();
-      for (var i = 0; i < pieces.length; i++) {
-        var piece = pieces[i];
-        bc.board[piece.row][piece.column] = piece.piece;
-      }
-    };
+    this.board = boardService.board;
+    this.click = boardService.click;
   }
 
   function board() {

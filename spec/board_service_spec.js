@@ -7,13 +7,20 @@ describe('Board Service', function() {
     boardService = _boardService_;
   }));
 
-  it('can select and unselect a piece', function() {
-    expect(boardService.selectedPiece).toEqual(undefined);
+  it('can select a piece', function() {
+    var piece = boardService.getPiece(2, 2);
+    expect(piece.selected).toEqual(false);
 
-    boardService.select(2, 2);
-    expect(boardService.selectedPiece.rank).toEqual('footman');
+    boardService.click(2, 2);
+    expect(piece.selected).toEqual(true);
+  });
 
-    boardService.select(3, 3);
-    expect(boardService.selectedPiece).toEqual(undefined);
+  it('can move a piece', function() {
+    var piece = boardService.getPiece(2, 2);
+    boardService.click(2, 2);
+    boardService.click(4, 4);
+
+    expect(boardService.getPiece(2, 2).rank).toEqual(undefined);
+    expect(boardService.getPiece(4, 4).rank).toEqual('footman');
   });
 });

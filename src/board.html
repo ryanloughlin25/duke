@@ -1,8 +1,8 @@
 <div>
-  <div class="row" ng-model="bc.board" ng-repeat="row in bc.board track by $index">
+  <div class="row" ng-repeat="row in bc.board track by $index">
     <div
       class="square"
-      ng-click="bc.select($parent.$index, $index)"
+      ng-click="bc.click($parent.$index, $index)"
       ng-repeat="square in row track by $index">
       <div
         class="piece {{square.color}}"
