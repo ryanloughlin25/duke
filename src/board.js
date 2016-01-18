@@ -1,71 +1,81 @@
 (function(angular) {
 
-  function BoardService($http) {
-    var bs = this;
-    this.size = 6;
-    this.selectedPiece;
+  function PieceService($http) {
+    var ps = this;
+    this.pieces = [
+      piece(2, 2, 'footman', 'white')
+    ];
     this.allMoves;
-    this.pieces = {
-      '2,2': piece('footman', 'white')
-    };
 
     $http.get('./moves.json').then(function(response) {
-      bs.allMoves = response.data;
+      ps.allMoves = response.data;
     });
 
-    this.getPieces = function() {
-      var pieces = [];
-      for (loc in bs.pieces) {
-        var piece = bs.pieces[loc];
-        pieces.push({
-          row: loc.split(',')[0],
-          column: loc.split(',')[1],
-          piece: {
-            selected: bs.selectedPiece === piece,
-            rank: piece.rank,
-            color: piece.color,
-            side: piece.side
-          }
-        });
-      }
-      return pieces;
+    this.getPiece = function(row, column) {
+      return ps.pieces.find(function(value) {
+        return isPiece(row, column, value);
+      });
     };
 
     this.select = function(row, column) {
-      var loc = row + ',' + column;
-      bs.selectedPiece = bs.pieces[loc];
+      ps.pieces = ps.pieces.map(function(value) {
+        value.piece.selected = isPiece(row, column, value);
+        return value;
+      });
     };
 
-    function piece(rank, color, side) {
+    function isPiece(row, column, piece) {
+      return piece.row === row && piece.column === column;
+    }
+
+    function piece(row, column, rank, color, side) {
       return {
-        rank: rank,
-        color: color,
-        side: side || 'front',
+        row: row,
+        column: column,
+        piece: {
+          rank: rank,
+          color: color,
+          side: side || 'front',
+          selected: false
+        }
       };
     }
   }
 
-  function BoardController(boardService) {
-    var bc = this;
+  function SetupService() {
+    var ss = this;
+    this.size = 6;
+  }
+
+  function BoardService(pieceService) {
+    var bs = this;
+    this.size = 6;
     this.board;
     updateBoard();
+
     this.select = function(row, column) {
-      boardService.select(row, column);
+      pieceService.select(row, column);
       updateBoard();
     };
 
     function updateBoard() {
-      var size = boardService.size;
-      bc.board = Array(size).fill(null).map(function() {
+      var size = bs.size;
+      bs.board = Array(size).fill(null).map(function() {
         return Array(size).fill(null);
       });
 
-      var pieces = boardService.getPieces();
+      var pieces = pieceService.pieces;
       for (var i = 0; i < pieces.length; i++) {
         var piece = pieces[i];
-        bc.board[piece.row][piece.column] = piece.piece;
+        bs.board[piece.row][piece.column] = piece.piece;
       }
     };
+  }
+
+  function BoardController(setupService, boardService) {
+    var bc = this;
+    this.board = boardService.board;
+    this.select = boardService.select;
   }
 
   function board() {
@@ -79,5 +89,7 @@
 
   angular.module('board', [])
     .directive('board', board)
-    .service('boardService', BoardService);
+    .service('pieceService', PieceService)
+    .service('boardService', BoardService)
+    .service('setupService', SetupService);
 })(window.angular);

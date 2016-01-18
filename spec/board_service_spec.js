@@ -5,15 +5,16 @@ describe('Board Service', function() {
   beforeEach(module('board'));
   beforeEach(inject(function(_boardService_) {
     boardService = _boardService_;
+    board = boardService.board;
   }));
 
   it('can select and unselect a piece', function() {
-    expect(boardService.selectedPiece).toEqual(undefined);
+    expect(board[2][2].selected).toEqual(false);
 
     boardService.select(2, 2);
-    expect(boardService.selectedPiece.rank).toEqual('footman');
+    expect(board[2][2].selected).toEqual(true);
 
     boardService.select(3, 3);
-    expect(boardService.selectedPiece).toEqual(undefined);
+    expect(board[2][2].selected).toEqual(false);
   });
 });
