@@ -27,6 +27,15 @@ describe('Board Service', function() {
     expect(boardService.getPiece(5, 2).rank).toEqual('duke');
   });
 
+  it('flips a piece on move', function() {
+    expect(boardService.getPiece(0, 2).side).toEqual('front');
+    boardService.click(0, 2);
+    boardService.click(5, 2);
+
+    expect(boardService.getPiece(0, 2).side).toEqual(undefined);
+    expect(boardService.getPiece(5, 2).side).toEqual('back');
+  });
+
   it('can end the turn', function() {
     expect(boardService.turn).toEqual('light');
     boardService.endTurn();

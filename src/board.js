@@ -51,6 +51,7 @@
       var selectedPiece = bs.getPiece(bs.row, bs.column);
       if (typeof bs.row === 'number' && typeof bs.column === 'number') {
         selectedPiece.selected = false;
+        selectedPiece.flip();
         bs.board[bs.row][bs.column] = new Object();
         bs.board[row][column] = selectedPiece;
         bs.row = null;
@@ -88,7 +89,10 @@
         rank: rank,
         color: color,
         side: side || 'front',
-        selected: false
+        selected: false,
+        flip: function() {
+          this.side = this.side === 'front' ? 'back' : 'front'
+        }
       };
     }
 
